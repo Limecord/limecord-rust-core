@@ -1,46 +1,44 @@
 use std::io::Cursor;
 
-use rocket::response::{self, Responder, Response};
-use rocket::{http::ContentType, response::ResponseBuilder};
+use rocket::http::ContentType;
+use rocket::response::{Responder, Response};
 use rocket::{http::Status, request::Request};
-use rocket_contrib::json::JsonValue;
 
-#[derive(Debug)]
+// See reference: https://discord.com/developers/docs/topics/opcodes-and-status-codes
+#[derive(Debug, Clone)]
 pub enum Error {
+    // these errors have code 0
     NotFound,
+    Unauthorized,
+
+    // these errors have different codes and statuses
+    // 50041: Invalid API version provided
     InvalidAPIVersion,
 }
 
-macro_rules! error_response {
-    ($status:expr, $code:expr, $message:expr) => {
-        json_value = json!({ "code": $code, "message": $message }).to_string();
-        rocket::response::Response::build()
-            .status($status)
-            .header(ContentType::JSON)
-            .sized_body(json_value.len(), Cursor::new(json_value))
-            .finalize()
-    }
-}
-
 impl Error {
-    fn response<'f>(status: Status, message: &str, code: u32) -> Response<'f> {
-        let json_value = json!({ "code": code, "message": message }).to_string();
+    fn get_error_data(&self) -> (Status, &str, u32) {
+        match self {
+            Self::InvalidAPIVersion => (Status::BadRequest, "Invalid API version", 50041),
+            Self::Unauthorized => (Status::Unauthorized, "404: Unauthorized", 0),
+            Self::NotFound => (Status::NotFound, "404: Not Found", 0),
+        }
+    }
+
+    #[inline]
+    fn to_response<'o>(&self) -> Response<'o> {
+        let data = self.get_error_data();
+        let json_str = json!({ "code": data.2, "message": data.1 }).to_string();
         Response::build()
-            .status(status)
+            .status(data.0)
             .header(ContentType::JSON)
-            .sized_body(json_value.len(), Cursor::new(json_value))
+            .sized_body(json_str.len(), Cursor::new(json_str))
             .finalize()
     }
 }
 
 impl<'r, 'o: 'r> Responder<'r, 'o> for Error {
     fn respond_to(self, _: &'r Request<'_>) -> Result<Response<'o>, Status> {
-        let json_value: String;
-        let response = match self {
-            InvalidAPIVersion => error_response! { Status::BadRequest, "Invalid API version", 50041) },
-            NotFound => error_response! { Status::NotFound, "404: Not Found", 0 },
-        };
-
-        Ok(response)
+        Ok(self.to_response())
     }
 }
