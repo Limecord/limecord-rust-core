@@ -7,3 +7,12 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# this uses the latest version of rocket (0.5), be sure to change the version = 0.5 upon actual release
+rocket = { git = "https://github.com/SergioBenitez/Rocket", branch = "master" }
+rocket_cors = { git = "https://github.com/lawliet89/rocket_cors", branch = "master" }
+
+[dependencies.rocket_contrib]
+git = "https://github.com/SergioBenitez/Rocket"
+branch = "master"
+default-features = false
+features = ["json", "uuid", "helmet"]
