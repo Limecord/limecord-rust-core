@@ -2,6 +2,9 @@ use crate::responders::error::Error;
 use std::str::FromStr;
 
 pub mod tracking;
+pub mod users;
+
+const MAX_API_VERSION: u8 = 8;
 
 #[inline]
 fn api_version_check<'t>(input_version: String, min_version: u8) -> Result<(), Error> {
@@ -10,9 +13,7 @@ fn api_version_check<'t>(input_version: String, min_version: u8) -> Result<(), E
     }
 
     let version = u8::from_str(&input_version[1..]).map_err(|_| Error::NotFound)?;
-    println!("Version: {:?}", version);
-
-    if version >= min_version {
+    if version >= min_version && version <= MAX_API_VERSION {
         Ok(())
     } else {
         return Err(Error::InvalidAPIVersion);
@@ -20,5 +21,10 @@ fn api_version_check<'t>(input_version: String, min_version: u8) -> Result<(), E
 }
 
 pub fn get_routes() -> Vec<rocket::Route> {
-    routes![tracking::science]
+    routes![
+        // tracking controller
+        tracking::science,
+        // user controllers
+        users::user
+    ]
 }
