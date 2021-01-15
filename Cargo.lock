@@ -437,10 +437,10 @@ checksum = "89203f3fba0a3795506acaad8ebce3c80c0af93f994d5a1d7a0b1eeb23271929"
 name = "limecord-core"
 version = "0.1.0"
 dependencies = [
- "regex",
  "rocket",
  "rocket_contrib",
  "rocket_cors",
+ "serde_json",
 ]
 
 [[package]]

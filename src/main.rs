@@ -1,10 +1,11 @@
-#[macro_use] extern crate rocket;
-mod controllers;
+#[macro_use]
+extern crate rocket;
+#[macro_use]
+extern crate rocket_contrib;
 
-#[get("/<name>/<age>")]
-fn hello(name: String, age: u8) -> String {
-    format!("Hello, {} year old named {}!", age, name)
-}
+mod controllers;
+mod guards;
+mod responders;
 
 #[launch]
 fn rocket() -> rocket::Rocket {
