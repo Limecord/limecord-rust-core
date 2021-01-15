@@ -10,6 +10,7 @@ edition = "2018"
 # this uses the latest version of rocket (0.5), be sure to change the version = 0.5 upon actual release
 rocket = { git = "https://github.com/SergioBenitez/Rocket", branch = "master" }
 rocket_cors = { git = "https://github.com/lawliet89/rocket_cors", branch = "master" }
+regex = "1"
 
 [dependencies.rocket_contrib]
 git = "https://github.com/SergioBenitez/Rocket"

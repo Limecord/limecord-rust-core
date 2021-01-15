@@ -1,4 +1,5 @@
 #[macro_use] extern crate rocket;
+mod controllers;
 
 #[get("/<name>/<age>")]
 fn hello(name: String, age: u8) -> String {
@@ -7,5 +8,5 @@ fn hello(name: String, age: u8) -> String {
 
 #[launch]
 fn rocket() -> rocket::Rocket {
-    rocket::ignite().mount("/hello", routes![hello])
+    rocket::ignite().mount("/api", controllers::get_routes())
 }
