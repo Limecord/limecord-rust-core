@@ -16,6 +16,8 @@ pub enum Error {
     InvalidAPIVersion,
 }
 
+pub type GenericError = Box<dyn std::error::Error + 'static>;
+
 impl Error {
     fn get_error_data(&self) -> (Status, &str, u32) {
         match self {
